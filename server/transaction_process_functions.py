@@ -10,14 +10,18 @@ def getFrequencies(tab, start_day, end_day, freq='daily'):
         return out
     transaction_range = tab.loc[date_range]
     out_val = transaction_range.groupby('Category')['Amount'].sum().to_dict()
+    diff_days = (end_day - start_day).days
+    if (diff_days==0):
+        diff_days = 1
+
     if (freq == 'weekly'):
-        r = (end_day - start_day).days/7
+        r = diff_days/7
     elif (freq=='monthly'):
-        r = (end_day - start_day).days/30
+        r = diff_days/30
     elif (freq=='yearly'):
-        r = (end_day - start_day).days/365
+        r = diff_days/365
     else:
-        r = (end_day - start_day).days
+        r = diff_days
     for k in out_val:
         out_val[k] = out_val[k]/r
         out[k] = out_val[k]
@@ -31,14 +35,18 @@ def getFrequenciesCounts(tab, start_day, end_day, freq='daily'):
         return out
     transaction_range = tab.loc[date_range]
     out_val = transaction_range['Category'].value_counts().to_dict()
+    diff_days = (end_day - start_day).days
+    if (diff_days==0):
+        diff_days = 1
+
     if (freq == 'weekly'):
-        r = (end_day - start_day).days/7
+        r = diff_days/7
     elif (freq=='monthly'):
-        r = (end_day - start_day).days/30
+        r = diff_days/30
     elif (freq=='yearly'):
-        r = (end_day - start_day).days/365
+        r = diff_days/365
     else:
-        r = (end_day - start_day).days
+        r = diff_days
     for k in out_val:
         out_val[k] = out_val[k]/r
         out[k] = out_val[k]
@@ -86,3 +94,21 @@ def create_categories_map(tab, label='Category'):
     for c in cat_set:
         out[c] = 0
     return out
+
+def getFrequencyDate(time, freq='daily'):
+    """returns the start and end dates based on the given frequency
+    possible freq = 'daily', 'weekly', 'monthly', 'yearly' """
+    if (freq=='weekly'):
+        start = time - dt.timedelta(days=time.weekday())
+        end = start + dt.timedelta(days=6)
+    elif (freq=='monthly'):
+        start = time.replace(day=1)
+        start_day, end_day = calendar.monthrange(time.year,time.month)
+        end = time.replace(day=end_day)
+    elif (freq=='yearly'):
+        start = time.replace(month=1).replace(day=1)
+        end = time.replace(month=12).replace(day=31)
+    else:
+        start = time
+        end = time
+    return start, end

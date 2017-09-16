@@ -9,16 +9,21 @@ app = Flask(__name__)
 def root():
     return "Hello World"
 
-@app.route("/spending-today", methods=['GET'])
+@app.route("/spending-date", methods=['POST'])
 def spending_today():
+    date = request.values.get("date")
     # TODO: Query CSV for total spending for today
-    resp = {'text': '200'}
+    resp = {'text': '200', 'date': date}
     return json.dumps(resp)
 
 @app.route('/set-goal', methods=['POST'])
 def set_goal():
     print(request.values.get("goal"))
     # TODO: Save goal value in storage (csv)
+    frame = pd.read_csv('goals.csv')
+    frame['goal'][0] = request.values.get('goal')
+    frame['progress'][0] = 0
+    frame.to_csv('goals.csv', index=False)
 
     return str(request.values.get("goal"))
 
@@ -27,6 +32,18 @@ def get_progress():
     frame = pd.read_csv('goals.csv')
     resp = {'goal': int(frame['goal'][0]), 'progress': int(frame['progress'][0])}
     return json.dumps(resp)
+
+@app.route('/get-routines', methods=['GET'])
+def get_routines():
+    """Returns JSON list of routines. User will select these and modify."""
+    frame = pd.read_csv('routines.csv')
+    routine_list = []
+    for index, row in frame.iterrows():
+        routine_list.append((row['name'], float(row['freq']), int(row['value'])))
+
+    return json.dumps(routine_list)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

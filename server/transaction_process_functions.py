@@ -141,7 +141,7 @@ def sum_dict(d):
     for c in d:
         s+=d[c]
     return s
-def comparison(data, tab, category, ty):
+def comparison(data, tab, category, ty, KeySets):
     result = []
     for key in KeySets:
         value = tab[key][category]

@@ -118,7 +118,7 @@ def get_weekly_update_helper(tab, today):
     # result11 = comparison_age(week_freqp['Transportation', age, 'Transportation', 'wk'])
     compare_line = ""
     if result1 < 0:
-        compare_line = "You spent " + str(np.absolute(result1)) + " less than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
+        compare_line = "You spent " + str(round(np.absolute(result1),2)) + " less than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
     else:
-        compare_line = "You spent " + str(np.absolute(result1)) + " more than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
+        compare_line = "You spent " + str(round(np.absolute(result1),2)) + " more than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
     return pre_str + so_far_str+good_saved_str+risk_category_str+compare_line

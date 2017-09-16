@@ -53,7 +53,7 @@ def get_daily_update_helper(tab, today):
         for risk in high_freq:
             risk_category_str += "You spent significantly more on "+risk+" than previously before. "
 
-    
+
     # similar = get_spending_similar(tab, today)
     # interesting_similar = max(similar.keys(), key=(lambda k: similar[k]))
     # # will add line abuot high spending comparing to others spendings
@@ -106,4 +106,19 @@ def get_weekly_update_helper(tab, today):
         for risk in high_freq:
             risk_category_str += risk + " "
 
-    return pre_str + so_far_str+good_saved_str+risk_category_str
+    income = pd.read_csv("Data for Income.csv")
+    income = income.set_index(income['Catergories']).drop('Catergories', axis = 1)
+    age = pd.read_csv("Data for age under 25.csv")
+    age = age.set_index(age['Categories']).drop('Categories', axis = 1)
+    KeySets = ['less than 5000', '5000-9999', '10000-14999', '15000-19999', '20000-29999', '30000-39999', '40000-49999', '50000-69999']
+
+    result0 = comparison(week_freq['Food'], income, 'Food', 'wk', KeySets)
+    # result01 = comparison(week_freq['Transportation'], income, 'Transportation', 'wk', KeySets)
+    result1 = comparison_age(week_freq['Food'], age, 'Food', '$/wk/person')
+    # result11 = comparison_age(week_freqp['Transportation', age, 'Transportation', 'wk'])
+    compare_line = ""
+    if result1 < 0:
+        compare_line = "You spent " + str(np.absolute(result1)) + " less than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
+    else:
+        compare_line = "You spent " + str(np.absolute(result1)) + " more than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
+    return pre_str + so_far_str+good_saved_str+risk_category_str+compare_line

@@ -141,3 +141,17 @@ def sum_dict(d):
     for c in d:
         s+=d[c]
     return s
+def comparison(data, tab, category, ty):
+    result = []
+    for key in KeySets:
+        value = tab[key][category]
+        if ty == 'wk':
+            result.append(value[:value.index('/')])
+        else:
+            result.append(value[value.index('/')+1:])
+    result0 = [np.absolute(data-int(da)) for da in result]
+    return KeySets[np.argmin(result0)]
+
+def comparison_age(data, tab, category, ty):
+    value = tab[ty][category]
+    return (data-value)/value

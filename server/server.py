@@ -49,6 +49,16 @@ def get_routines():
 
     return json.dumps(routine_list)
 
+@app.route('/populate-routines', methods=['POST'])
+def populate_routines():
+    """find routines, purge and rewrite the routines csv. only called on a new week. rolls on a thirty-day window."""
+    date_string = request.values.get('ds')
+    date_end = pd.to_datetime(date_string)
+    date_start = date_end - pd.Timedelta(30, 'D') # 30 day window
+
+    frame = pd.read_csv('transactions.csv')
+    frame = process_raw(frame)
+    return str(getFrequencies(frame, date_start, date_end))
 
 
 if __name__ == "__main__":

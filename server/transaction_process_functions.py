@@ -9,7 +9,7 @@ def getFrequencies(tab, start_day, end_day, freq='daily'):
     if (len(date_range)==0):
         return out
     transaction_range = tab.loc[[i for i in pd.date_range(start_day, end_day).values if i in tab.index.values]]
-    out_val = df.groupby('Category')['Amount'].sum().to_dict()
+    out_val = tab.groupby('Category')['Amount'].sum().to_dict()
     if (freq == 'weekly'):
         r = (end_day - start_day).days/7
     elif (freq=='monthly'):

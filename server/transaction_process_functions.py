@@ -30,3 +30,12 @@ def getTodayExpenditure(tab, today=dt.datetime.today()):
     '''gets amount of money spent today'''
     today_transactions = tab.loc[today.date()]
     return sum(today_transactions['Amount'])
+
+def process_raw(tab):
+    if (type(tab)==str):
+        df = pd.read_csv(str)
+    else:
+        df = tab
+    df['Date'] = pd.to_datetime(df['Date'])
+    df = df.set_index(df['Date']).drop('Date',axis=1)
+    return df

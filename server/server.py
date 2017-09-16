@@ -1,5 +1,8 @@
 from flask import Flask, url_for, request, redirect, json, jsonify
 import pandas as pd
+import datetime as dt
+
+from transaction_process_functions import *
 
 
 app = Flask(__name__)
@@ -11,10 +14,13 @@ def root():
 
 @app.route("/spending-date", methods=['POST'])
 def spending_today():
-    date = request.values.get("date")
+    date_string = request.values.get("ds")
+    print(date_string)
     # TODO: Query CSV for total spending for today
-    resp = {'text': '200', 'date': date}
-    return json.dumps(resp)
+    frame = pd.read_csv('transactions.csv')
+    frame = process_raw(frame)
+    spending = getTodayExpenditure(frame,today=pd.to_datetime(date_string))
+    return json.dumps(spending)
 
 @app.route('/set-goal', methods=['POST'])
 def set_goal():

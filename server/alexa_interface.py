@@ -6,6 +6,7 @@ from transaction_process_functions import *
 def get_daily_update(table_str, today=dt.datetime.today()):
     # will give weekly update on Sundays
     tab = pd.read_csv(table_str)
+    today = pd.to_datetime("2017-9-16")
     tab = process_raw(tab)
     if (today.weekday()==5):
         return get_weekly_update_helper(tab, today)

@@ -7,7 +7,7 @@ def get_daily_update(table_str, today=dt.datetime.today()):
     # will give weekly update on Sundays
     tab = pd.read_csv(table_str)
     tab = process_raw(tab)
-    if (today.weekday()==6):
+    if (today.weekday()==5):
         return get_weekly_update_helper(tab, today)
     else:
         return get_daily_update_helper(tab, today)
@@ -71,7 +71,7 @@ def get_daily_update_helper(tab, today):
 
 
 def get_weekly_update_helper(tab, today):
-    pre_str = "It is Sunday! Here is how your week looked. "
+    pre_str = "It is Saturday! Here is how your week looked. "
     today_expense = getTodayExpenditure(tab, today)
     full_freq = full_category_frequencies(tab, 'daily')
     start_week, end_week = getFrequencyDate(today, 'weekly')
@@ -118,7 +118,7 @@ def get_weekly_update_helper(tab, today):
     # result11 = comparison_age(week_freqp['Transportation', age, 'Transportation', 'wk'])
     compare_line = ""
     if result1 < 0:
-        compare_line = "You spent " + str(round(np.absolute(result1),2)) + " less than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
+        compare_line = "You spent " + str(round(np.absolute(result1),2)) + " per week less than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
     else:
-        compare_line = "You spent " + str(round(np.absolute(result1),2)) + " more than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
+        compare_line = "You spent " + str(round(np.absolute(result1),2)) + " per week more than people of your similar age on food. And your spent on food is similar to people with income " + str(result0)
     return pre_str + so_far_str+good_saved_str+risk_category_str+compare_line

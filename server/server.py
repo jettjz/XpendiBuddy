@@ -66,15 +66,17 @@ def get_flash_breifing():
         mainText=m
     )
 
+    print(json_response)
 
-    response = app.response_class(
-        response=json_response,
-        status=200,
-        mimetype='application/json',
-        headers = Headers({ Content-Type:'application/json'})
-    )
+    # response = app.response_class(
+    #     response=json_response,
+    #     status=200,
+    #     mimetype='application/json',
+    # )
 
-    return response
+    # response.headers['Content-Type'] = 'application/json'
+
+    return json_response
     #print(response)
     #return response
     #response_w_header = Flask.Response(json_reponse)

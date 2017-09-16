@@ -53,7 +53,7 @@ def get_routines():
 @app.route('/flash-breifing', methods=['GET'])
 def get_flash_breifing():
     """ returns a JSON object that encodes the user's flash briefing """
-    m = get_daily_update("")
+    m = get_daily_update("transactions.csv")
 
     # TODO add non-hard coded date here
     d = '2017-09-16T00:00:00.00-000'
@@ -66,14 +66,17 @@ def get_flash_breifing():
         mainText=m
     )
 
+    print(json_response)
 
-    response = app.response_class(
-        response=json_response,
-        status=200,
-        mimetype='application/json',
-        headers = Headers({ Content-Type:'application/json'})
-    )
-    return response
+    # response = app.response_class(
+    #     response=json_response,
+    #     status=200,
+    #     mimetype='application/json',
+    # )
+
+    # response.headers['Content-Type'] = 'application/json'
+
+    return json_response
     #print(response)
     #return response
     #response_w_header = Flask.Response(json_reponse)

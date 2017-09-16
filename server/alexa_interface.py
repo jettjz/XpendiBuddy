@@ -7,7 +7,7 @@ def get_daily_update(table_str, today=dt.datetime.today()):
     # will give weekly update on Sundays
     tab = pd.read_csv('transactions.csv')
     tab = process_raw(tab)
-    if (today.weekday()==0):
+    if (today.weekday()==6):
         return get_weekly_update_helper(tab, today)
     else:
         return get_daily_update_helper(tab, today)
@@ -17,7 +17,7 @@ def get_daily_update_helper(tab, today):
     """return JSON of daily update"""
     today_expense = getTodayExpenditure(tab, today)
     full_freq = full_category_frequencies(tab, 'daily')
-    start_week, end_week = getFrequencyDate(today)
+    start_week, end_week = getFrequencyDate(today, 'weekly')
     week_freq = getFrequencies(tab, start_week, end_week)
     week_expenses = getRangeExpenditure(tab, start_week, end_week)
 

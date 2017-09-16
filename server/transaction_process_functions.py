@@ -8,8 +8,8 @@ def getFrequencies(tab, start_day, end_day, freq='daily'):
     out = create_categories_map(tab)
     if (len(date_range)==0):
         return out
-    transaction_range = tab.loc[[i for i in pd.date_range(start_day, end_day).values if i in tab.index.values]]
-    out_val = tab.groupby('Category')['Amount'].sum().to_dict()
+    transaction_range = tab.loc[date_range]
+    out_val = transaction_range.groupby('Category')['Amount'].sum().to_dict()
     if (freq == 'weekly'):
         r = (end_day - start_day).days/7
     elif (freq=='monthly'):
@@ -29,7 +29,7 @@ def getFrequenciesCounts(tab, start_day, end_day, freq='daily'):
     out = create_categories_map(tab)
     if (len(date_range)==0):
         return out
-    transaction_range = tab.loc[[i for i in pd.date_range(start_day, end_day).values if i in tab.index.values]]
+    transaction_range = tab.loc[date_range]
     out_val = transaction_range['Category'].value_counts().to_dict()
     if (freq == 'weekly'):
         r = (end_day - start_day).days/7
@@ -43,6 +43,14 @@ def getFrequenciesCounts(tab, start_day, end_day, freq='daily'):
         out_val[k] = out_val[k]/r
         out[k] = out_val[k]
     return out
+
+def full_category_frequencies(tab, freq='Daily'):
+    """returns the frequency of entire table"""
+    return getFrequencies(tab, min(tab.index), max(tab.index), freq)
+
+def full_category_frequencies_counts(tab, freq='Daily'):
+    """returns the frequency counts of entire table"""
+    return getFrequenciesCounts(tab, min(tab.index), max(tab.index), freq)
 
 def getRangeExpenditure(tab, date_start, date_end, category=None):
     '''returns the amount of money spent in date range'''

@@ -112,3 +112,28 @@ def getFrequencyDate(time, freq='daily'):
         start = time
         end = time
     return start, end
+
+def savings_since(tab, start_day, end_day, freq='weekly'):
+    past_freq = getFrequencies(tab, min(tab.index), start_day-dt.timedelta(days=1), 'weekly')
+    current_freq = getFrequencies(tab, start_day, end_day, 'weekly')
+    #interesting_categories = set(['Alcohol and Bars','Clothing','Coffee Shops','Fast Food','Food',''])
+    diff = past_freq
+    for cat in past_freq:
+        diff[cat] = past_freq[cat]-current_freq[cat]
+    return diff
+
+def get_frequent_categories(tab, threshold=0.5):
+    """returns a dict of categories and frequencies for categories that have a frequency over 0.5"""
+    cats = full_category_frequencies_counts(tab, 'weekly')
+    out = dict()
+    for cat in cats:
+        if (cats[cat] > threshold):
+            out[cat] = cats[cat]
+    return out
+
+def sum_dict(d):
+    '''returns the sum of a dictionary (key=anything, value=addable)'''
+    s=0
+    for c in d:
+        s+=d[c]
+    return s

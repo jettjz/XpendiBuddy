@@ -49,6 +49,66 @@ def get_routines():
 
     return json.dumps(routine_list)
 
+def populate_routines(date_start, date_end):
+    """find routines, purge and rewrite the routines csv. only called on a new week. rolls on a thirty-day window."""
+    ROUTINE_THRESH = 0.5
+
+    frame = pd.read_csv('transactions.csv')
+    frame = process_raw(frame)
+    freqs = getFrequenciesCounts(frame, date_start, date_end,freq='weekly')
+    values = getFrequencies(frame, date_start, date_end,freq='weekly')
+
+    routines = []
+
+    for k in freqs:
+        if freqs[k] > ROUTINE_THRESH:
+            routines.append((k, freqs[k], values[k]))
+
+    routines.sort(key=lambda x: -x[1])
+
+    routine_frames = pd.DataFrame(routines)
+    routine_frames.columns = ['name', 'freq', 'value']
+
+    routine_frames.to_csv('routines.csv', index=False)
+
+@app.route('/activate-suggestions', methods=['POST'])
+def activate_suggestions():
+    """Activates suggestions by pushing them to the active suggestions csv.
+    Expects JSON in following format:
+
+    List of 3-tuples (name, freq, savings)
+
+    Savings should be calculated on the Alexa side. If r = normal routine freq,
+    and n = user-chosen reduced freq, savings = value * (1 - n/r)
+    """
+    suggestions = request.values.get('suggestions')
+    print(suggestions)
+    suggestions = eval(suggestions)
+    print(suggestions)
+
+    suggestion_frames = pd.DataFrame(suggestions)
+    suggestion_frames.columns = ['name', 'freq', 'savings']
+
+    suggestion_frames.to_csv('active_suggestions.csv', index=False)
+
+    return "success"
+
+@app.route('/weekly-update', methods=['POST'])
+def weekly():
+    date_string = request.values.get('ds')
+    date_end = pd.to_datetime(date_string)
+    date_start = date_end - pd.Timedelta(30, 'D') # 30 day window
+    print(date_start, date_end)
+    populate_routines(date_start, date_end)
+    return 'WEEKLY'
+
+@app.route('/daily-update', methods=['POST'])
+def daily():
+    # How much you spent yesterday
+    # Progress on goal routines
+    # How much you will save if you fulfill the active routine
+    pass
+
 
 
 if __name__ == "__main__":

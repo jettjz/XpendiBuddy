@@ -3,7 +3,7 @@ import pandas as pd
 import datetime as dt
 
 def getFrequencies(tab, start_day, end_day, freq='daily'):
-    '''returns the frequencies of each category in the table tab from start_day to end_day based'''
+    """returns dictionary of frequencies of price (eg $/time specified)"""
     date_range = [i for i in pd.date_range(start_day, end_day).values if i in tab.index.values]
     out = create_categories_map(tab)
     if (len(date_range)==0):
@@ -18,10 +18,30 @@ def getFrequencies(tab, start_day, end_day, freq='daily'):
         r = (end_day - start_day).days/365
     else:
         r = (end_day - start_day).days
-    for k in out:
+    for k in out_val:
         out_val[k] = out_val[k]/r
-    for c in out_val:
-        out[c] = out_val[c]
+        out[k] = out_val[k]
+    return out
+
+def getFrequenciesCounts(tab, start_day, end_day, freq='daily'):
+    """returns dictionary of frequencies of occurrences (eg num_purchases/time specified)"""
+    date_range = [i for i in pd.date_range(start_day, end_day).values if i in tab.index.values]
+    out = create_categories_map(tab)
+    if (len(date_range)==0):
+        return out
+    transaction_range = tab.loc[[i for i in pd.date_range(start_day, end_day).values if i in tab.index.values]]
+    out_val = transaction_range['Category'].value_counts().to_dict()
+    if (freq == 'weekly'):
+        r = (end_day - start_day).days/7
+    elif (freq=='monthly'):
+        r = (end_day - start_day).days/30
+    elif (freq=='yearly'):
+        r = (end_day - start_day).days/365
+    else:
+        r = (end_day - start_day).days
+    for k in out_val:
+        out_val[k] = out_val[k]/r
+        out[k] = out_val[k]
     return out
 
 def getRangeExpenditure(tab, date_start, date_end, category=None):

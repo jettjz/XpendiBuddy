@@ -62,21 +62,25 @@ def full_category_frequencies_counts(tab, freq='Daily'):
 
 def getRangeExpenditure(tab, date_start, date_end, category=None):
     '''returns the amount of money spent in date range'''
+    if (category!=None):
+        tab = tab[tab['Category']==category]
+
     date_range = [i for i in pd.date_range(date_start, date_end).values if i in tab.index.values]
     if (len(date_range)==0):
         return 0
+
     today_transactions = tab.loc[date_range]
-    today_transactions.head()
-    if (category==None):
-        return sum(today_transactions['Amount'])
-    else:
-        return sum(today_transactions[today_transactions['Category']==category]['Amount'])
+    if (isinstance(today_transactions, pd.Series)):
+        return today_transactions['Amount']
+    return sum(today_transactions['Amount'])
 
 def getTodayExpenditure(tab, today=dt.datetime.today()):
-    '''gets amount of money spent today or the specified date'''
+    '''gets amount of money spent toady'''
     if (today not in tab.index):
         return 0
     today_transactions = tab.loc[today.date()]
+    if (isinstance(today_transactions, pd.Series)):
+        return today_transactions['Amount']
     return sum(today_transactions['Amount'])
 
 def process_raw(tab):

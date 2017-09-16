@@ -4,6 +4,7 @@ import datetime as dt
 
 from transaction_process_functions import *
 
+from alexa_interface import get_daily_update
 
 app = Flask(__name__)
 
@@ -48,6 +49,36 @@ def get_routines():
         routine_list.append((row['name'], float(row['freq']), int(row['value'])))
 
     return json.dumps(routine_list)
+
+@app.route('/flash-breifing', methods=['GET'])
+def get_flash_breifing():
+    """ returns a JSON object that encodes the user's flash briefing """
+    m = get_daily_update("")
+
+    # TODO add non-hard coded date here
+    d = '2017-09-16T00:00:00.00-000'
+    t = 'Expendi Buddy Flash briefing'
+    u = 'urn:uuid:testaroo'
+    json_response =  jsonify(
+        uid=u,
+        updateDate=d,
+        titleText=t,
+        mainText=m
+    )
+
+
+    response = app.response_class(
+        response=json_response,
+        status=200,
+        mimetype='application/json',
+        headers = Headers({ Content-Type:'application/json'})
+    )
+    return response
+    #print(response)
+    #return response
+    #response_w_header = Flask.Response(json_reponse)
+    #response_w_header.headers['Content-Type'] = 'application/json'
+    #return response_w_header
 
 def populate_routines(date_start, date_end):
     """find routines, purge and rewrite the routines csv. only called on a new week. rolls on a thirty-day window."""
@@ -104,10 +135,15 @@ def weekly():
 
 @app.route('/daily-update', methods=['POST'])
 def daily():
+    """ makes a call to the daily update method from alexa_interface.py, but does
+    not return a full flash briefing object -> only a string """
     # How much you spent yesterday
     # Progress on goal routines
     # How much you will save if you fulfill the active routine
-    pass
+    # does not specify any extra params to get daily updates
+    m = get_daily_update("")
+
+    return jsonify(message=m)
 
 
 

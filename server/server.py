@@ -136,7 +136,7 @@ def weekly():
     populate_routines(date_start, date_end)
     return 'WEEKLY'
 
-@app.route('/daily-update', methods=['POST'])
+@app.route('/daily-update', methods=['GET'])
 def daily():
     """ makes a call to the daily update method from alexa_interface.py, but does
     not return a full flash briefing object -> only a string """
@@ -144,9 +144,9 @@ def daily():
     # Progress on goal routines
     # How much you will save if you fulfill the active routine
     # does not specify any extra params to get daily updates
-    m = get_daily_update("")
+    m = get_daily_update("transactions.csv")
 
-    return jsonify(message=m)
+    return jsonify(m)
 
 
 

@@ -36,7 +36,7 @@ def get_daily_update_helper(tab, today):
             good_saved[cat] = -differences[cat]
             good_saved_str += "You are on track to save approximately " + str(round(good_saved[cat],2)) + " this week due to savings in " + cat + ". "
     if (len(good_saved)>1):
-        good_saved_str += "Overrall, we estimate you will save " + str(round(sum_dict(good_saved),2)) + " dollars by the end of the week compared to previous weeks. Great job! "
+        good_saved_str += "Overall, we estimate you will save " + str(round(sum_dict(good_saved),2)) + " dollars by the end of the week compared to previous weeks. Great job! "
 
 
     high_freq = set()

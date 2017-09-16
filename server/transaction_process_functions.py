@@ -119,7 +119,7 @@ def savings_since(tab, start_day, end_day, freq='weekly'):
     #interesting_categories = set(['Alcohol and Bars','Clothing','Coffee Shops','Fast Food','Food',''])
     diff = past_freq
     for cat in past_freq:
-        diff[cat] = past_freq[cat]-current_freq[cat]
+        diff[cat] = current_freq[cat]-past_freq[cat]
     return diff
 
 def get_frequent_categories(tab, threshold=0.5):

@@ -62,21 +62,25 @@ def full_category_frequencies_counts(tab, freq='Daily'):
 
 def getRangeExpenditure(tab, date_start, date_end, category=None):
     '''returns the amount of money spent in date range'''
+    if (category!=None):
+        tab = tab[tab['Category']==category]
+
     date_range = [i for i in pd.date_range(date_start, date_end).values if i in tab.index.values]
     if (len(date_range)==0):
         return 0
+
     today_transactions = tab.loc[date_range]
-    today_transactions.head()
-    if (category==None):
-        return sum(today_transactions['Amount'])
-    else:
-        return sum(today_transactions[today_transactions['Category']==category]['Amount'])
+    if (isinstance(today_transactions, pd.Series)):
+        return today_transactions['Amount']
+    return sum(today_transactions['Amount'])
 
 def getTodayExpenditure(tab, today=dt.datetime.today()):
-    '''gets amount of money spent today or the specified date'''
+    '''gets amount of money spent toady'''
     if (today not in tab.index):
         return 0
     today_transactions = tab.loc[today.date()]
+    if (isinstance(today_transactions, pd.Series)):
+        return today_transactions['Amount']
     return sum(today_transactions['Amount'])
 
 def process_raw(tab):
@@ -112,3 +116,28 @@ def getFrequencyDate(time, freq='daily'):
         start = time
         end = time
     return start, end
+
+def savings_since(tab, start_day, end_day, freq='weekly'):
+    past_freq = getFrequencies(tab, min(tab.index), start_day-dt.timedelta(days=1), 'weekly')
+    current_freq = getFrequencies(tab, start_day, end_day, 'weekly')
+    #interesting_categories = set(['Alcohol and Bars','Clothing','Coffee Shops','Fast Food','Food',''])
+    diff = past_freq
+    for cat in past_freq:
+        diff[cat] = current_freq[cat]-past_freq[cat]
+    return diff
+
+def get_frequent_categories(tab, threshold=0.5):
+    """returns a dict of categories and frequencies for categories that have a frequency over 0.5"""
+    cats = full_category_frequencies_counts(tab, 'weekly')
+    out = dict()
+    for cat in cats:
+        if (cats[cat] > threshold):
+            out[cat] = cats[cat]
+    return out
+
+def sum_dict(d):
+    '''returns the sum of a dictionary (key=anything, value=addable)'''
+    s=0
+    for c in d:
+        s+=d[c]
+    return s
